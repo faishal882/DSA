@@ -1,7 +1,10 @@
 #include <iostream>
+#include <limits.h>
 #include <list>
 #include <queue>
+#include <stack>
 #include <unordered_map>
+#include <vector>
 using namespace std;
 
 class Graph {
@@ -22,6 +25,34 @@ public:
       cout << endl;
     }
   }
+
+  void dfs(int node, unordered_map<int, bool> &vis, stack<int> &topo) {
+    vis[node] = true;
+
+    for (auto neighbour : adj[node]) {
+      if (!vis[neighbour.first]) {
+        dfs(neighbour.first, vis, topo);
+      }
+    }
+    topo.push(node);
+  }
+
+  void getShortestPath(int src, vector<int> &dist, stack<int> &topo) {
+    dist[src] = 0;
+
+    while (!topo.empty()) {
+      int top = topo.top();
+      topo.pop();
+
+      if (dist[top] != INT_MAX) {
+        for (auto i : adj[top]) {
+          if (dist[top] + i.second < dist[i.first]) {
+            dist[i.first] = dist[top] + i.second;
+          }
+        }
+      }
+    }
+  }
 };
 
 int main() {
@@ -37,5 +68,28 @@ int main() {
   g.addEdge(4, 5, -2);
 
   g.printAdj();
+
+  int n = 6;
+  unordered_map<int, bool> visited;
+  stack<int> s;
+  for (int i = 0; i < n; i++) {
+    if (!visited[i]) {
+      g.dfs(i, visited, s);
+    }
+  }
+
+  int src = 1;
+  vector<int> dist(n);
+  for (int i = 0; i < n; i++) {
+    dist[i] = INT_MAX;
+  }
+
+  g.getShortestPath(src, dist, s);
+
+  cout << "answer is: ";
+  for (int i = 0; i < dist.size(); i++) {
+    cout << dist[i] << " ";
+  }
+  cout << endl;
   return 0;
 }
