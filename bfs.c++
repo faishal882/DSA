@@ -21,7 +21,6 @@ void bfs(unordered_map<int, list<int>> &adjList,
   queue<int> q;
   q.push(node);
   visited[node] = 1;
-
   while (!q.empty()) {
     int frontNode = q.front();
     q.pop();
